@@ -137,7 +137,9 @@ npm start
 
 #### Termux Known Issues
 
-- **Prisma native engine**: incompatible with Android. If you see `P5010` or `Unable to require libquery_engine...`, you’re hitting this limitation. Use Option B with a remote Postgres, or run on desktop.
+- **Prisma native engine**: incompatible with Android. If you see `P5010` or `Unable to require libquery_engine...`, the backend cannot run Prisma on Termux. Use one of these paths:
+  - Run the backend on a desktop/server/VPS, then access it from Termux via the frontend or API.
+  - Replace Prisma with a pure-JS PostgreSQL client (requires code changes).
 - **Missing global CLIs**: if `vite`, `tsx`, or `tsc` are not found, use `npx vite build`, `npx tsx src/server.ts`, or run `npm install` in the relevant folder.
 - **Zod config errors**: ensure `.env` exists and contains `DATABASE_URL` and `JWT_SECRET`.
 - **`npm run build` fails**: on Termux, `tsc` may be missing. Use `npm start` instead, which builds the frontend and runs the backend via `npx tsx`.
