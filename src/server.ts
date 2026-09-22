@@ -12,7 +12,8 @@ import { errorHandler } from './core/errors.js';
 const app = express();
 
 app.use(helmet());
-app.use(cors({ origin: config.APP_URL, credentials: true }));
+const allowedOrigins = [config.APP_URL, 'http://localhost:5173', 'http://localhost:3000'];
+app.use(cors({ origin: allowedOrigins, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
