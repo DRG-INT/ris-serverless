@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { tenantMiddleware, requireAuth } from '../../core/tenant.js';
+import { requireAuth } from '../../core/tenant.js';
 import { generateAccessToken, generateRefreshToken, authenticateUser, createUser } from '../../core/auth.js';
 import { prisma } from '../../core/database.js';
 import jwt from 'jsonwebtoken';

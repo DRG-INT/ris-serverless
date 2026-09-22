@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 
 export abstract class BaseRepository<T extends { id: string }> {
   protected prisma: PrismaClient;
@@ -7,19 +7,19 @@ export abstract class BaseRepository<T extends { id: string }> {
     this.prisma = prisma;
   }
 
-  async findById(id: string): Promise<T | null> {
+  async findById(_id: string): Promise<T | null> {
     throw new Error('Not implemented');
   }
 
-  async create(data: Record<string, unknown>): Promise<T> {
+  async create(_data: Record<string, unknown>): Promise<T> {
     throw new Error('Not implemented');
   }
 
-  async update(id: string, data: Record<string, unknown>): Promise<T> {
+  async update(_id: string, _data: Record<string, unknown>): Promise<T> {
     throw new Error('Not implemented');
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(_id: string): Promise<void> {
     throw new Error('Not implemented');
   }
 }

@@ -2,7 +2,6 @@ import { Router } from 'express';
 import { prisma } from '../../core/database.js';
 import { tenantMiddleware, requireAuth, requireOrganization } from '../../core/tenant.js';
 import { z } from 'zod';
-import { AppError } from '../../core/errors.js';
 import { eventBus } from '../../core/event-bus.js';
 
 const router = Router();
@@ -41,7 +40,7 @@ router.get('/', async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-async function executeRule(rule: { id: string; name: string; conditions: unknown; actions: unknown[] }, payload: Record<string, unknown>) {
+async function executeRule(rule: { id: string; name: string; conditions: unknown; actions: unknown[] }, _payload: Record<string, unknown>) {
   console.log(`Executing automation rule: ${rule.name}`);
 }
 

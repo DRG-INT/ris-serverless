@@ -2,7 +2,6 @@ import { Router } from 'express';
 import { prisma } from '../../core/database.js';
 import { tenantMiddleware, requireAuth, requireOrganization } from '../../core/tenant.js';
 import { z } from 'zod';
-import { AppError } from '../../core/errors.js';
 
 const router = Router();
 router.use(tenantMiddleware, requireAuth, requireOrganization);

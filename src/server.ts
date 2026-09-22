@@ -5,7 +5,7 @@ import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
 import { config } from './core/config.js';
-import { Database, prisma } from './core/database.js';
+import { prisma } from './core/database.js';
 import { router } from './core/router.js';
 import { errorHandler } from './core/errors.js';
 

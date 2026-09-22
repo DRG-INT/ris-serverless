@@ -1,8 +1,8 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { prisma } from '../core/database.js';
-import { config } from '../core/config.js';
-import { UnauthorizedError, AppError } from '../core/errors.js';
+import { prisma } from './database.js';
+import { config } from './config.js';
+import { UnauthorizedError } from './errors.js';
 
 export async function hashPassword(password: string): Promise<string> {
   return bcrypt.hash(password, 12);
