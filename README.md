@@ -50,26 +50,64 @@ npm run build          # Builds frontend, then compiles backend TypeScript
 npm start              # Serves API + static frontend from :3000
 ```
 
-### Termux / Android Workaround
+### Termux / Android Setup
 
-Prisma’s native engine binary does not run on Android/Termux. If you hit a schema engine JSON parse error there, use this workaround:
-
-1. **Generate Prisma client only** — skip migration SQL execution:
+1. Install system dependencies:
 ```bash
-npx prisma generate
+pkg update && pkg install -y git nodejs postgresql
 ```
 
-2. **Apply the existing initial migration manually**:
+2. Clone the repo and install dependencies:
 ```bash
-psql "$DATABASE_URL" -f prisma/migrations/20260921191957_init/migration.sql
+git clone https://github.com/DRG-INT/ris-serverless.git
+cd ris-serverless
+npm install
+cd frontend && npm install && cd ..
 ```
 
-3. **Seed the database**:
+3. Create `.env` in the project root:
 ```bash
-npx tsx prisma/seed.ts
+cat > .env << 'EOF'
+NODE_ENV=development
+APP_NAME="Recreation in Sport"
+APP_URL=http://localhost:3000
+PORT=3000
+
+DATABASE_URL="postgresql://peter@localhost:5432/ris_serverless?schema=public"
+
+JWT_SECRET=change-me-in-production-minimum-32-chars-long
+JWT_ACCESS_TTL=3600
+JWT_REFRESH_TTL=604800
+
+STRIPE_SECRET_KEY=
+STRIPE_PUBLISHABLE_KEY=
+STRIPE_WEBHOOK_SECRET=
+
+MAIL_FROM=noreply@example.com
+MAIL_DRIVER=log
+EOF
 ```
 
-Alternatively, run `db:generate` and `db:seed` from a desktop machine, then connect the Android app to that Postgres instance.
+4. Initialize local PostgreSQL (if using local DB):
+```bash
+initdb ~/postgres_data
+pg_ctl -D ~/postgres_data -l ~/postgres.log start
+```
+
+5. Start the app:
+```bash
+npm start
+```
+
+### Termux / Android Known Issues
+
+- **Prisma schema engine**: native binary does not run on Android. Skip `npm run db:generate` and apply the initial migration manually:
+  ```bash
+  psql "$DATABASE_URL" -f prisma/migrations/20260921191957_init/migration.sql
+  npx tsx prisma/seed.ts
+  ```
+- **Missing global CLIs**: if `vite`, `tsx`, or `tsc` are not found, use `npx vite build`, `npx tsx src/server.ts`, or run `npm install` in the relevant folder.
+- **Zod config errors**: ensure `.env` exists and contains `DATABASE_URL` and `JWT_SECRET`.
 
 ## Demo Credentials
 
