@@ -167,17 +167,31 @@ npm run test
 
 ## Scripts
 
-- `npm run dev` - Start backend dev server
-- `npm run build` - Build backend
+- `npm run dev` - Start backend dev server with tsx watch
+- `npm run build` - Build frontend with Vite, then compile backend TypeScript
+- `npm run start` - Build frontend and run backend via tsx (no dist/ needed)
 - `npm run test` - Run tests
-- `npm run lint` - Lint backend
+- `npm run lint` - Lint backend TypeScript
 - `npm run db:generate` - Generate Prisma migrations
 - `npm run db:seed` - Seed database
 - `npm run db:studio` - Open Prisma Studio
-- `npm run frontend:dev` - Start frontend dev server
-- `npm run frontend:build` - Build frontend
+- `npm run frontend:dev` - Start frontend dev server with Vite
+- `npm run frontend:build` - Build frontend for production
 - `npm run frontend:install` - Install frontend dependencies
 
 ## Frontend Notes
 
-The frontend is a vanilla JavaScript + Vite application with no build-time transpilation.
+- **Stack**: Vanilla JavaScript + Vite (no React, no TypeScript transpilation in frontend)
+- **Structure**: Modular files in `frontend/src/` — `router.js`, `api.js`, `views/dashboard.js`, etc.
+- **Routing**: Hash-based SPA routing
+- **Auth**: `localStorage` tokens; dashboard fetches `GET /auth/me`
+- **Dev**: Vite proxies `/api` to backend `:3000`
+- **Prod**: Express serves `frontend/dist/` statically
+- **Lint**: `cd frontend && npm run lint`
+
+## Backend Notes
+
+- **Stack**: TypeScript, Express, Prisma, PostgreSQL
+- **Auth**: JWT access + refresh tokens, bcrypt hashing
+- **Multi-tenancy**: `tenantMiddleware` sets `req.tenant` from Bearer token
+- **Modules**: 20+ bounded contexts under `src/modules/*`

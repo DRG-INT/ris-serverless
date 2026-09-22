@@ -5,22 +5,24 @@
 | Area | Status | Evidence |
 |------|--------|----------|
 | Frontend framework | READY | Vanilla JavaScript with Vite |
-| Build system | READY | Vite configured for static serving |
-| TypeScript | ADAPTABLE | Frontend rewritten in plain JS to avoid runtime/transpile issues |
-| CSS strategy | READY | Embedded CSS in index.html with utility-like classes |
-| Routing | READY | Hash-based routing implemented in vanilla JS |
-| State management | READY | Simple localStorage + fetch API |
-| API client | READY | Typed `api` helper in `frontend/index.html` |
+| Build system | READY | Vite configured for dev proxy and production build |
+| TypeScript | N/A | Frontend is plain JS; backend is TypeScript |
+| CSS strategy | READY | Extracted `frontend/src/style.css` with utility-like classes |
+| Routing | READY | Hash-based routing in `frontend/src/router.js` |
+| State management | READY | `localStorage` for tokens + in-memory UI state |
+| API client | READY | `frontend/src/api.js` with auth headers, 401 redirect, error parsing |
 | Testing framework | ADAPTABLE | Vitest installed; frontend tests not yet implemented |
-| Existing UI components | REQUIRES IMPLEMENTATION | Basic UI built with plain DOM APIs |
+| Linting | READY | ESLint configured in `frontend/.eslintrc.cjs` |
+| Existing UI components | IMPLEMENTED | Modular vanilla JS views in `frontend/src/views/` |
 
 ## GUI Implementation Status
 
 | Area | Status | Evidence |
 |------|--------|----------|
-| Application shell | PASS | Sidebar + header layout in vanilla JS |
-| Authentication pages | PASS | Login and Register pages implemented |
-| Routing | PASS | Hash-based routing with protected areas |
+| Application shell | PASS | Sidebar + header layout in `dashboard.js` |
+| Authentication pages | PASS | Login and Register pages in `login.js` / `register.js` |
+| Routing | PASS | Hash-based routing with auth guards in `router.js` |
+| Auth profile fetch | PASS | Dashboard calls `GET /auth/me` and populates user email |
 | Dashboard | PASS | Real API data from members, activities, revenue |
 | Members list | PASS | Table with create form |
 | Activities list | PASS | Table view |
@@ -36,18 +38,37 @@
 
 ## Known Limitations
 
-1. White screen issue was caused by React/JSX/TS transpilation mismatch; resolved by switching to vanilla JS
-2. No member portal routes (`/member/*`) implemented yet
-3. No detail pages (member, activity, booking)
-4. No calendar views (day/week/month) - only session list
-5. No waitlist UI, credit creation, invoices, automation builder, integration settings
-6. No E2E tests, accessibility audit, command palette, or global search
+1. No member portal routes (`/member/*`) implemented yet
+2. No detail pages (member, activity, booking)
+3. No calendar views (day/week/month) - only session list
+4. No waitlist UI, credit creation, invoices, automation builder, integration settings
+5. No E2E tests, accessibility audit, command palette, or global search
+
+## Frontend File Structure
+
+```
+frontend/
+├── index.html              # SPA shell, loads /src/main.js
+├── package.json
+├── vite.config.ts          # Dev server with /api proxy to :3000
+├── .eslintrc.cjs           # ESLint config for vanilla JS
+├── public/                 # Static assets
+└── src/
+    ├── main.js             # Entry point
+    ├── router.js           # Hash-based routing + auth guards
+    ├── api.js              # Fetch wrapper with token handling
+    ├── utils.js            # DOM helper utilities
+    ├── style.css           # Global styles
+    └── views/
+        ├── login.js        # Login form + submission
+        ├── register.js     # Registration form + submission
+        └── dashboard.js    # App shell + all dashboard views
+```
 
 ## Recommendations
 
-1. Verify login/dashboard screens render correctly after vanilla JS rewrite
-2. Add member portal routes
-3. Add detail pages
-4. Expand settings and integration pages
-5. Add E2E tests for critical paths
-6. Conduct accessibility audit
+1. Add member portal routes
+2. Add detail pages for members, activities, bookings
+3. Expand settings and integration pages
+4. Add E2E tests for critical paths
+5. Conduct accessibility audit
