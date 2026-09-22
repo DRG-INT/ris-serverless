@@ -1,0 +1,108 @@
+openapi: 3.0.3
+info:
+  title: Recreation in Sport API
+  version: 1.0.0
+  description: API-first modular sports and recreation management platform
+
+servers:
+  - url: http://localhost:3000/api/v1
+
+paths:
+  /health:
+    get:
+      summary: Health check
+      responses:
+        '200':
+          description: OK
+  /ready:
+    get:
+      summary: Readiness check
+      responses:
+        '200':
+          description: Ready
+  /auth/register:
+    post:
+      summary: Register new organization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email: { type: string }
+                password: { type: string }
+                organizationName: { type: string }
+      responses:
+        '201':
+          description: Created
+  /auth/login:
+    post:
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email: { type: string }
+                password: { type: string }
+      responses:
+        '200':
+          description: OK
+  /organizations:
+    get:
+      summary: List organizations
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Create organization
+      responses:
+        '201':
+          description: Created
+  /members:
+    get:
+      summary: List members
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Create member
+      responses:
+        '201':
+          description: Created
+  /activities:
+    get:
+      summary: List activities
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Create activity
+      responses:
+        '201':
+          description: Created
+  /scheduling:
+    get:
+      summary: List sessions
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Create session
+      responses:
+        '201':
+          description: Created
+  /bookings:
+    post:
+      summary: Create booking
+      responses:
+        '201':
+          description: Created
+    post /{id}/cancel:
+      summary: Cancel booking
+      responses:
+        '200':
+          description: OK

@@ -1,0 +1,106 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Recreation in Sport Product Model",
+  "type": "object",
+  "required": ["product", "domains", "entities", "relationships", "roles", "events", "api"],
+  "properties": {
+    "product": {
+      "type": "object",
+      "required": ["name", "version", "description"],
+      "properties": {
+        "name": { "type": "string" },
+        "version": { "type": "string" },
+        "description": { "type": "string" }
+      }
+    },
+    "domains": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "entities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "module", "purpose"],
+        "properties": {
+          "name": { "type": "string" },
+          "module": { "type": "string" },
+          "purpose": { "type": "string" }
+        }
+      }
+    },
+    "relationships": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["from", "to", "type"],
+        "properties": {
+          "from": { "type": "string" },
+          "to": { "type": "string" },
+          "type": { "enum": ["one-to-one", "one-to-many", "many-to-many"] }
+        }
+      }
+    },
+    "roles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "permissions"],
+        "properties": {
+          "name": { "type": "string" },
+          "permissions": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    },
+    "events": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "integrations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["provider", "type"],
+        "properties": {
+          "provider": { "type": "string" },
+          "type": { "type": "string" }
+        }
+      }
+    },
+    "api": {
+      "type": "object",
+      "required": ["basePath", "auth", "pagination", "versioning"],
+      "properties": {
+        "basePath": { "type": "string" },
+        "auth": { "type": "string" },
+        "pagination": { "type": "string" },
+        "versioning": { "type": "string" }
+      }
+    },
+    "reports": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "endpoint"],
+        "properties": {
+          "name": { "type": "string" },
+          "endpoint": { "type": "string" }
+        }
+      }
+    },
+    "automations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["event", "action"],
+        "properties": {
+          "event": { "type": "string" },
+          "action": { "type": "string" }
+        }
+      }
+    }
+  }
+}
