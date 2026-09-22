@@ -5,7 +5,7 @@ API-first modular sports and recreation management platform.
 ## Repository
 
 - **Backend/API**: Node.js, Express, Prisma, PostgreSQL
-- **Frontend/GUI**: React, TypeScript, Vite, TanStack Query, Tailwind CSS
+- **Frontend/GUI**: Vanilla JavaScript + Vite
 
 ## Quick Start
 
@@ -47,6 +47,27 @@ cd frontend && npm run dev
 ```
 
 Frontend available at `http://localhost:5173`.
+
+### Termux / Android Workaround
+
+Prisma’s native engine binary does not run on Android/Termux. If you hit a schema engine JSON parse error there, use this workaround:
+
+1. **Generate Prisma client only** — skip migration SQL execution:
+```bash
+npx prisma generate
+```
+
+2. **Apply the existing initial migration manually**:
+```bash
+psql "$DATABASE_URL" -f prisma/migrations/20260921191957_init/migration.sql
+```
+
+3. **Seed the database**:
+```bash
+npx tsx prisma/seed.ts
+```
+
+Alternatively, run `db:generate` and `db:seed` from a desktop machine, then connect the Android app to that Postgres instance.
 
 ## Demo Credentials
 
