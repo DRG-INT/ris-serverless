@@ -1,12 +1,459 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Recreation in Sport</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Recreation in Sport</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background: #f3f4f6; color: #111827; }
+    a { color: inherit; text-decoration: none; }
+    .hidden { display: none !important; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; padding: 8px 14px; border-radius: 8px; border: 1px solid transparent; font-size: 14px; cursor: pointer; }
+    .btn-primary { background: #0284c7; color: white; border-color: #0284c7; }
+    .btn-primary:hover { background: #0369a1; }
+    .btn-secondary { background: white; color: #111827; border-color: #d1d5db; }
+    .btn-danger { background: #dc2626; color: white; border-color: #dc2626; }
+    .card { background: white; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+    .input { width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; }
+    .input:focus { outline: none; border-color: #0ea5e9; box-shadow: 0 0 0 3px rgba(14,165,233,0.15); }
+    .label { display: block; font-size: 13px; font-weight: 500; color: #374151; margin-bottom: 6px; }
+    .badge { display: inline-flex; align-items: center; padding: 2px 10px; border-radius: 9999px; font-size: 12px; font-weight: 500; }
+    .badge-success { background: #dcfce7; color: #166534; }
+    .badge-warning { background: #fef9c3; color: #854d0e; }
+    .badge-error { background: #fee2e2; color: #991b1b; }
+    .badge-info { background: #dbeafe; color: #1e40af; }
+    .spinner { width: 24px; height: 24px; border: 3px solid #e5e7eb; border-top-color: #0284c7; border-radius: 50%; animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid #e5e7eb; }
+    th { font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; font-size: 12px; background: #f9fafb; }
+    tr:hover td { background: #f9fafb; }
+    .grid { display: grid; gap: 16px; }
+    .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+    .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    @media (max-width: 1024px) { .grid-cols-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 640px) { .grid-cols-2, .grid-cols-4 { grid-template-columns: repeat(1, minmax(0, 1fr)); } }
+    .flex { display: flex; }
+    .items-center { align-items: center; }
+    .justify-between { justify-content: space-between; }
+    .gap-4 { gap: 16px; }
+    .mt-2 { margin-top: 8px; }
+    .mt-4 { margin-top: 16px; }
+    .mb-6 { margin-bottom: 24px; }
+    .p-4 { padding: 16px; }
+    .p-6 { padding: 24px; }
+    .text-sm { font-size: 14px; }
+    .text-lg { font-size: 18px; font-weight: 600; }
+    .text-xl { font-size: 24px; font-weight: 700; }
+    .text-gray-600 { color: #4b5563; }
+    .text-gray-900 { color: #111827; }
+    .text-error { color: #dc2626; }
+    .font-medium { font-weight: 500; }
+    .font-bold { font-weight: 700; }
+    .space-y-4 > * + * { margin-top: 16px; }
+    .overflow-x-auto { overflow-x: auto; }
+    .whitespace-nowrap { white-space: nowrap; }
+    .text-center { text-align: center; }
+    .w-full { width: 100%; }
+    .h-screen { height: 100vh; }
+    .bg-gray-50 { background: #f9fafb; }
+    .bg-gray-900 { background: #111827; }
+    .text-white { color: white; }
+    .fixed { position: fixed; }
+    .inset-y-0 { top: 0; bottom: 0; }
+    .left-0 { left: 0; }
+    .z-50 { z-index: 50; }
+    .translate-x-0 { transform: translateX(0); }
+    .-translate-x-full { transform: translateX(-100%); }
+    .transform { transform: translateX(0); }
+    .transition-transform { transition: transform 0.2s ease-in-out; }
+    .duration-200 { transition-duration: 200ms; }
+    .ease-in-out { transition-timing-function: ease-in-out; }
+    .border-b { border-bottom: 1px solid #e5e7eb; }
+    .px-2 { padding-left: 8px; padding-right: 8px; }
+    .px-3 { padding-left: 12px; padding-right: 12px; }
+    .py-2 { padding-top: 8px; padding-bottom: 8px; }
+    .px-4 { padding-left: 16px; padding-right: 16px; }
+    .py-3 { padding-top: 12px; padding-bottom: 12px; }
+    .px-6 { padding-left: 24px; padding-right: 24px; }
+    .rounded-md { border-radius: 8px; }
+    .rounded-lg { border-radius: 12px; }
+    .shadow-sm { box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+    .hover-bg-gray-800:hover { background: #1f2937; }
+    .hover-bg-gray-100:hover { background: #f3f4f6; }
+    .flex-1 { flex: 1; }
+    .overflow-auto { overflow: auto; }
+    .flex-col { flex-direction: column; }
+    .lg-pl-64 { padding-left: 16rem; }
+    .h-16 { height: 64px; }
+    .mr-3 { margin-right: 12px; }
+    .ml-auto { margin-left: auto; }
+    .mt-1 { margin-top: 4px; }
+    .mt-5 { margin-top: 20px; }
+    .text-2xl { font-size: 24px; }
+    .text-3xl { font-size: 30px; }
+    .text-lg { font-size: 18px; }
+    .text-sm { font-size: 14px; }
+    .text-xs { font-size: 12px; }
+    .font-semibold { font-weight: 600; }
+    .font-medium { font-weight: 500; }
+    .capitalize { text-transform: capitalize; }
+    .min-w-full { min-width: 100%; }
+    .divide-y > * + * { border-top: 1px solid #e5e7eb; }
+    .divide-gray-200 > * + * { border-top-color: #e5e7eb; }
+    .bg-white { background: white; }
+    .bg-gray-50 { background: #f9fafb; }
+    .bg-gray-100 { background: #f3f4f6; }
+    .bg-red-50 { background: #fef2f2; }
+    .bg-green-100 { background: #dcfce7; }
+    .bg-yellow-100 { background: #fef9c3; }
+    .bg-blue-100 { background: #dbeafe; }
+    .text-green-800 { color: #166534; }
+    .text-yellow-800 { color: #854d0e; }
+    .text-blue-800 { color: #1e40af; }
+    .text-red-800 { color: #991b1b; }
+    .border { border: 1px solid #e5e7eb; }
+    .border-error { border-color: #dc2626; }
+    .rounded-md { border-radius: 8px; }
+    .flex-wrap { flex-wrap: wrap; }
+    .items-end { align-items: flex-end; }
+    .gap-4 { gap: 16px; }
+    .w-64 { width: 256px; }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <script>
+    const API_BASE = '/api/v1';
+    const TOKEN_KEY = 'accessToken';
+
+    function getToken() { return localStorage.getItem(TOKEN_KEY); }
+    function setToken(t) { localStorage.setItem(TOKEN_KEY, t); }
+    function clearToken() { localStorage.removeItem(TOKEN_KEY); }
+
+    async function api(url, options = {}) {
+      const token = getToken();
+      const headers = { 'Content-Type': 'application/json', ...(token ? { Authorization: 'Bearer ' + token } : {}), ...options.headers };
+      const res = await fetch(API_BASE + url, { ...options, headers });
+      if (res.status === 401) { clearToken(); location.href = '/#/login'; throw new Error('Unauthorized'); }
+      if (!res.ok) { const err = await res.json().catch(() => ({ error: { message: 'Request failed' } })); throw new Error(err.error?.message || 'Request failed'); }
+      if (res.status === 204) return null;
+      return res.json();
+    }
+
+    function el(tag, attrs = {}, children = []) {
+      const e = document.createElement(tag);
+      Object.entries(attrs).forEach(([k, v]) => {
+        if (k === 'class') e.className = v;
+        else if (k === 'text') e.textContent = v;
+        else if (k === 'html') e.innerHTML = v;
+        else e.setAttribute(k, v);
+      });
+      children.forEach(c => e.appendChild(c));
+      return e;
+    }
+
+    function show(id) { document.querySelectorAll('.view').forEach(v => v.classList.add('hidden')); const view = document.getElementById(id); if (view) view.classList.remove('hidden'); }
+
+    const routes = {
+      login: () => {
+        const app = document.getElementById('app');
+        app.innerHTML = '';
+        const wrap = el('div', { class: 'flex items-center justify-center h-screen bg-gray-50 p-4' });
+        const card = el('div', { class: 'card p-6 w-full max-w-sm' });
+        card.appendChild(el('h1', { class: 'text-xl font-bold text-gray-900 text-center mb-1', text: 'Recreation in Sport' }));
+        card.appendChild(el('p', { class: 'text-sm text-gray-600 text-center mb-6', text: 'Sign in to your account' }));
+        const form = el('form', { class: 'space-y-4' });
+        const email = el('input', { type: 'email', placeholder: 'Email', class: 'input', required: '' });
+        const password = el('input', { type: 'password', placeholder: 'Password', class: 'input', required: '' });
+        const error = el('div', { class: 'hidden text-sm text-error' });
+        const btn = el('button', { type: 'submit', class: 'btn btn-primary w-full', text: 'Sign in' });
+        form.appendChild(error);
+        form.appendChild(el('label', { text: 'Email' }));
+        form.appendChild(email);
+        form.appendChild(el('label', { text: 'Password' }));
+        form.appendChild(password);
+        form.appendChild(btn);
+        form.appendChild(el('p', { class: 'text-sm text-gray-600 text-center', html: 'No account? <a href="#/register" class="text-primary-600">Register</a>' }));
+        card.appendChild(form);
+        wrap.appendChild(card);
+        app.appendChild(wrap);
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          error.classList.add('hidden');
+          btn.disabled = true;
+          try { const res = await api('/auth/login', { method: 'POST', body: JSON.stringify({ email: email.value, password: password.value }) }); setToken(res.accessToken); localStorage.setItem('refreshToken', res.refreshToken); location.hash = '#/dashboard'; }
+          catch (err) { error.textContent = err.message; error.classList.remove('hidden'); }
+          finally { btn.disabled = false; }
+        });
+      },
+      register: () => {
+        const app = document.getElementById('app');
+        app.innerHTML = '';
+        const wrap = el('div', { class: 'flex items-center justify-center h-screen bg-gray-50 p-4' });
+        const card = el('div', { class: 'card p-6 w-full max-w-sm' });
+        card.appendChild(el('h1', { class: 'text-xl font-bold text-gray-900 text-center mb-1', text: 'Recreation in Sport' }));
+        card.appendChild(el('p', { class: 'text-sm text-gray-600 text-center mb-6', text: 'Create your account' }));
+        const form = el('form', { class: 'space-y-4' });
+        const error = el('div', { class: 'hidden text-sm text-error' });
+        const fields = [
+          { label: 'First name', type: 'text', name: 'firstName' },
+          { label: 'Last name', type: 'text', name: 'lastName' },
+          { label: 'Organization', type: 'text', name: 'organizationName' },
+          { label: 'Email', type: 'email', name: 'email' },
+          { label: 'Password', type: 'password', name: 'password' },
+        ];
+        const inputs = {};
+        fields.forEach(f => {
+          form.appendChild(el('label', { class: 'label', text: f.label }));
+          inputs[f.name] = el('input', { type: f.type, name: f.name, class: 'input', required: '' });
+          form.appendChild(inputs[f.name]);
+        });
+        const btn = el('button', { type: 'submit', class: 'btn btn-primary w-full', text: 'Create account' });
+        form.appendChild(btn);
+        form.appendChild(el('p', { class: 'text-sm text-gray-600 text-center', html: 'Have an account? <a href="#/login" class="text-primary-600">Sign in</a>' }));
+        card.appendChild(form);
+        wrap.appendChild(card);
+        app.appendChild(wrap);
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          error.classList.add('hidden');
+          btn.disabled = true;
+          try { const res = await api('/auth/register', { method: 'POST', body: JSON.stringify({ email: inputs.email.value, password: inputs.password.value, firstName: inputs.firstName.value, lastName: inputs.lastName.value, organizationName: inputs.organizationName.value }) }); setToken(res.accessToken); localStorage.setItem('refreshToken', res.refreshToken); location.hash = '#/dashboard'; }
+          catch (err) { error.textContent = err.message; error.classList.remove('hidden'); }
+          finally { btn.disabled = false; }
+        });
+      },
+      dashboard: async () => {
+        const app = document.getElementById('app');
+        app.innerHTML = '';
+        const shell = el('div', { class: 'flex h-screen' });
+        const sidebar = el('aside', { class: 'fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 text-white transform -translate-x-full lg:translate-x-0 transition-transform duration-200' });
+        const content = el('div', { class: 'flex flex-1 flex-col lg:pl-64' });
+        const header = el('header', { class: 'flex h-16 items-center justify-between bg-white px-4 shadow-sm lg:px-6' });
+        const main = el('main', { class: 'flex-1 overflow-auto p-4 lg:p-6' });
+        content.appendChild(header);
+        content.appendChild(main);
+        shell.appendChild(sidebar);
+        shell.appendChild(content);
+        app.appendChild(shell);
+
+        const nav = [
+          ['Dashboard', '#/dashboard'], ['Calendar', '#/calendar'], ['Activities', '#/activities'], ['Bookings', '#/bookings'],
+          ['Members', '#/members'], ['Memberships', '#/memberships'], ['Attendance', '#/attendance'], ['Payments', '#/payments'],
+          ['CRM', '#/crm'], ['Messages', '#/messages'], ['Reports', '#/reports'], ['Settings', '#/settings'],
+        ];
+        const navEl = el('nav', { class: 'mt-5 px-2 space-y-1' });
+        sidebar.appendChild(el('div', { class: 'flex h-16 items-center justify-center border-b border-gray-800', text: 'Recreation in Sport' }));
+        nav.forEach(([name, href]) => {
+          const a = el('a', { href, class: 'block rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-800 hover:text-white', text: name });
+          navEl.appendChild(a);
+        });
+        sidebar.appendChild(navEl);
+
+        const userEmail = el('span', { class: 'text-sm text-gray-700' });
+        const logoutBtn = el('button', { class: 'rounded-md bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-200', text: 'Logout' });
+        logoutBtn.onclick = () => { clearToken(); location.hash = '#/login'; };
+        header.appendChild(el('button', { class: 'lg:hidden text-2xl', text: '☰' }));
+        header.appendChild(el('div', { class: 'ml-auto flex items-center gap-4' }));
+        header.lastChild.appendChild(userEmail);
+        header.lastChild.appendChild(logoutBtn);
+
+        try {
+          const userRes = await api('/auth/login', { method: 'GET' });
+        } catch (e) {}
+
+        const views = {
+          dashboard: async () => {
+            main.innerHTML = '';
+            main.appendChild(el('h1', { class: 'text-2xl font-bold text-gray-900 mb-6', text: 'Dashboard' }));
+            const grid = el('div', { class: 'grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-6' });
+            const stats = [
+              ['Total Members', 'members', 'meta.total'],
+              ['Activities', 'activities', 'length'],
+              ['Revenue', 'reports/revenue', 'total'],
+            ];
+            for (const [label, ep, field] of stats) {
+              const card = el('div', { class: 'card p-4' });
+              card.appendChild(el('p', { class: 'text-sm font-medium text-gray-600', text: label }));
+              const value = el('p', { class: 'mt-2 text-3xl font-bold text-gray-900' });
+              card.appendChild(value);
+              grid.appendChild(card);
+              try {
+                const data = await api('/' + ep);
+                if (field === 'length') value.textContent = data.length || 0;
+                else if (field === 'meta.total') value.textContent = data?.meta?.total || 0;
+                else value.textContent = data?.total?.toLocaleString() || 0;
+              } catch (e) { value.textContent = '-'; }
+            }
+            const statusCard = el('div', { class: 'card p-4' });
+            statusCard.appendChild(el('p', { class: 'text-sm font-medium text-gray-600', text: 'Status' }));
+            statusCard.appendChild(el('p', { class: 'mt-2 text-3xl font-bold text-green-600', text: 'Active' }));
+            grid.appendChild(statusCard);
+            main.appendChild(grid);
+
+            const recentCard = el('div', { class: 'card p-4' });
+            recentCard.appendChild(el('h2', { class: 'text-lg font-semibold text-gray-900 mb-4', text: 'Recent Activities' }));
+            try {
+              const activities = await api('/activities');
+              if (activities && activities.length) {
+                const ul = el('ul', { class: 'mt-4 space-y-2' });
+                activities.slice(0, 5).forEach(a => ul.appendChild(el('li', { class: 'text-sm text-gray-700', text: a.name + ' - ' + a.type })));
+                recentCard.appendChild(ul);
+              } else recentCard.appendChild(el('p', { class: 'mt-4 text-sm text-gray-500', text: 'No activities yet.' }));
+            } catch (e) { recentCard.appendChild(el('p', { class: 'mt-4 text-sm text-error', text: 'Failed to load activities.' })); }
+            main.appendChild(recentCard);
+          },
+          members: async () => {
+            main.innerHTML = '';
+            main.appendChild(el('h1', { class: 'text-2xl font-bold text-gray-900 mb-6', text: 'Members' }));
+            const card = el('div', { class: 'card' });
+            const form = el('form', { class: 'p-4 border-b border-gray-200 space-y-4' });
+            form.appendChild(el('h2', { class: 'text-lg font-semibold', text: 'New Member' }));
+            const fields = [
+              { label: 'First name', name: 'firstName' },
+              { label: 'Last name', name: 'lastName' },
+              { label: 'Email', name: 'email', type: 'email' },
+              { label: 'Phone', name: 'phone' },
+            ];
+            const inputs = {};
+            fields.forEach(f => {
+              form.appendChild(el('label', { class: 'label', text: f.label }));
+              inputs[f.name] = el('input', { type: f.type || 'text', name: f.name, class: 'input', required: f.name !== 'phone' ? '' : undefined });
+              form.appendChild(inputs[f.name]);
+            });
+            const btn = el('button', { type: 'submit', class: 'btn btn-primary', text: 'Create Member' });
+            form.appendChild(btn);
+            const errorEl = el('p', { class: 'text-sm text-error hidden' });
+            form.appendChild(errorEl);
+            card.appendChild(form);
+            const tableWrap = el('div', { class: 'overflow-x-auto' });
+            const table = el('table', { class: 'min-w-full divide-y divide-gray-200' });
+            table.innerHTML = '<thead class="bg-gray-50"><tr><th class="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Name</th><th class="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Email</th><th class="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Phone</th><th class="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">Status</th></tr></thead><tbody class="divide-y divide-gray-200 bg-white"></tbody>';
+            const tbody = table.querySelector('tbody');
+            card.appendChild(table);
+            main.appendChild(card);
+            async function loadMembers() {
+              try {
+                const data = await api('/members');
+                tbody.innerHTML = '';
+                if (!data.data || !data.data.length) { tbody.innerHTML = '<tr><td colspan="4" class="px-4 py-8 text-center text-sm text-gray-500">No members found.</td></tr>'; return; }
+                data.data.forEach(m => {
+                  tbody.appendChild(el('tr', { class: 'hover:bg-gray-50', html: '<td class="px-4 py-3 text-sm font-medium text-gray-900">' + m.firstName + ' ' + m.lastName + '</td><td class="px-4 py-3 text-sm text-gray-700">' + m.email + '</td><td class="px-4 py-3 text-sm text-gray-700">' + (m.phone || '-') + '</td><td class="px-4 py-3 text-sm"><span class="badge ' + (m.status === 'active' ? 'badge-success' : '') + '">' + m.status + '</span></td>' }));
+                });
+              } catch (e) { tbody.innerHTML = '<tr><td colspan="4" class="px-4 py-8 text-center text-sm text-error">Failed to load members.</td></tr>'; }
+            }
+            await loadMembers();
+            form.addEventListener('submit', async (e) => {
+              e.preventDefault();
+              errorEl.classList.add('hidden');
+              btn.disabled = true;
+              try { await api('/members', { method: 'POST', body: JSON.stringify({ firstName: inputs.firstName.value, lastName: inputs.lastName.value, email: inputs.email.value, phone: inputs.phone.value || undefined }) }); form.reset(); await loadMembers(); }
+              catch (err) { errorEl.textContent = err.message; errorEl.classList.remove('hidden'); }
+              finally { btn.disabled = false; }
+            });
+          },
+          genericList: async (title, endpoint, columns) => {
+            main.innerHTML = '';
+            main.appendChild(el('h1', { class: 'text-2xl font-bold text-gray-900 mb-6', text: title }));
+            const card = el('div', { class: 'card' });
+            const tableWrap = el('div', { class: 'overflow-x-auto' });
+            const table = el('table', { class: 'min-w-full divide-y divide-gray-200' });
+            const thead = el('thead', { class: 'bg-gray-50' });
+            const headerRow = el('tr');
+            columns.forEach(col => headerRow.appendChild(el('th', { class: 'px-4 py-3 text-left text-xs font-medium uppercase text-gray-500', text: col.label })));
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+            const tbody = el('tbody', { class: 'divide-y divide-gray-200 bg-white' });
+            table.appendChild(tbody);
+            tableWrap.appendChild(table);
+            card.appendChild(tableWrap);
+            main.appendChild(card);
+            try {
+              const data = await api('/' + endpoint);
+              if (!data || (Array.isArray(data) && !data.length)) { tbody.innerHTML = '<tr><td colspan="' + columns.length + '" class="px-4 py-8 text-center text-sm text-gray-500">No records found.</td></tr>'; return; }
+              (Array.isArray(data) ? data : [data]).forEach(row => {
+                const tr = el('tr', { class: 'hover:bg-gray-50' });
+                columns.forEach(col => tr.appendChild(el('td', { class: 'px-4 py-3 text-sm text-gray-700', text: col.render ? col.render(row) : (row[col.key] || '-') })));
+                tbody.appendChild(tr);
+              });
+            } catch (e) { tbody.innerHTML = '<tr><td colspan="' + columns.length + '" class="px-4 py-8 text-center text-sm text-error">Failed to load ' + title.toLowerCase() + '.</td></tr>'; }
+          }
+        };
+
+        const routeViews = {
+          '#/dashboard': () => views.dashboard(),
+          '#/members': () => views.members(),
+          '#/activities': () => views.genericList('Activities', 'activities', [{ key: 'name' }, { key: 'type' }, { key: 'capacity' }, { key: 'duration' }, { key: 'status' }]),
+          '#/calendar': () => views.genericList('Calendar', 'scheduling', [{ key: 'activityId', label: 'Activity' }, { key: 'locationId', label: 'Location' }, { key: 'startsAt', label: 'Starts', render: r => new Date(r.startsAt).toLocaleString() }, { key: 'endsAt', label: 'Ends', render: r => new Date(r.endsAt).toLocaleString() }, { key: 'capacity' }, { key: 'status' }]),
+          '#/bookings': () => views.genericList('Bookings', 'bookings', [{ key: 'memberId' }, { key: 'sessionId' }, { key: 'status' }, { key: 'source' }]),
+          '#/memberships': () => views.genericList('Memberships', 'memberships', [{ key: 'memberId' }, { key: 'productId' }, { key: 'status' }, { key: 'startsAt', render: r => new Date(r.startsAt).toLocaleDateString() }, { key: 'expiresAt', render: r => r.expiresAt ? new Date(r.expiresAt).toLocaleDateString() : '-' }]),
+          '#/attendance': () => views.genericList('Attendance', 'attendance', [{ key: 'memberId' }, { key: 'sessionId' }, { key: 'method' }, { key: 'checkedInAt', render: r => new Date(r.checkedInAt).toLocaleString() }]),
+          '#/payments': () => views.genericList('Payments', 'payments', [{ key: 'memberId' }, { key: 'amount', render: r => Number(r.amount).toFixed(2) }, { key: 'currency' }, { key: 'status' }, { key: 'provider' }]),
+          '#/crm': () => views.genericList('CRM', 'crm', [{ key: 'source' }, { key: 'status' }, { key: 'notes' }, { key: 'createdAt', render: r => new Date(r.createdAt).toLocaleDateString() }]),
+          '#/messages': () => views.genericList('Messages', 'messages', [{ key: 'channel' }, { key: 'subject' }, { key: 'status' }, { key: 'sentAt', render: r => r.sentAt ? new Date(r.sentAt).toLocaleString() : '-' }]),
+          '#/reports': async () => {
+            main.innerHTML = '';
+            main.appendChild(el('h1', { class: 'text-2xl font-bold text-gray-900 mb-6', text: 'Reports' }));
+            const grid = el('div', { class: 'grid grid-cols-1 gap-6 lg:grid-cols-3' });
+            const cards = [
+              { title: 'Revenue', ep: '/reports/revenue', render: r => (r?.total?.toLocaleString() || '0') + ' ' + (r?.currency || '') + '<div class="mt-1 text-xs text-gray-500">' + (r?.count || 0) + ' transactions</div>' },
+              { title: 'Bookings', ep: '/reports/bookings', render: r => '<div>' + (r?.total || 0) + '</div><div class="mt-1 text-xs text-gray-500">' + Object.entries(r?.byStatus || {}).map(([k,v]) => k + ': ' + v).join(', ') + '</div>' },
+              { title: 'Members', ep: '/reports/members', render: r => '<div>' + (r?.total || 0) + '</div><div class="mt-1 text-xs text-gray-500">' + (r?.activeMemberships || 0) + ' active memberships</div>' },
+            ];
+            for (const c of cards) {
+              const card = el('div', { class: 'card p-4' });
+              card.appendChild(el('h3', { class: 'text-sm font-medium text-gray-600', text: c.title }));
+              const body = el('div', { class: 'mt-2 text-3xl font-bold text-gray-900' });
+              card.appendChild(body);
+              grid.appendChild(card);
+              try { const data = await api(c.ep); body.innerHTML = c.render(data); } catch (e) { body.textContent = '-'; }
+            }
+            main.appendChild(grid);
+          },
+          '#/settings': () => {
+            main.innerHTML = '';
+            main.appendChild(el('h1', { class: 'text-2xl font-bold text-gray-900 mb-6', text: 'Settings' }));
+            const grid = el('div', { class: 'grid grid-cols-1 gap-6 lg:grid-cols-2' });
+            const sections = [
+              { title: 'Organization', text: 'Manage organization details and settings through the API.' },
+              { title: 'Users & Roles', text: 'Manage staff, instructors, and permissions.' },
+              { title: 'Integrations', text: 'Configure third-party integrations.' },
+              { title: 'Security', text: 'Security and authentication settings.' },
+            ];
+            sections.forEach(s => {
+              const card = el('div', { class: 'card p-4' });
+              card.appendChild(el('h2', { class: 'text-lg font-semibold text-gray-900', text: s.title }));
+              card.appendChild(el('p', { class: 'mt-1 text-sm text-gray-600', text: s.text }));
+              grid.appendChild(card);
+            });
+            main.appendChild(grid);
+          }
+        };
+
+        function renderRoute() {
+          const hash = location.hash || '#/dashboard';
+          if (hash === '#/login' || hash === '#/register') { location.hash = '#/dashboard'; return; }
+          const view = routeViews[hash];
+          if (view) view();
+          else main.innerHTML = '<div class="p-6 text-sm text-gray-600">Select a section from the sidebar.</div>';
+        }
+
+        window.addEventListener('hashchange', renderRoute);
+        renderRoute();
+      }
+    };
+
+    function init() {
+      const hash = location.hash || '#/login';
+      if (hash === '#/login') routes.login();
+      else if (hash === '#/register') routes.register();
+      else routes.dashboard();
+    }
+
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+  </script>
+</body>
 </html>

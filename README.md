@@ -38,12 +38,12 @@ API available at `http://localhost:3000/api/v1`.
 
 1. Install dependencies:
 ```bash
-npm run frontend:install
+cd frontend && npm install
 ```
 
 2. Start the GUI:
 ```bash
-npm run frontend:dev
+cd frontend && npm run dev
 ```
 
 Frontend available at `http://localhost:5173`.
@@ -81,3 +81,7 @@ npm run test
 - `npm run frontend:dev` - Start frontend dev server
 - `npm run frontend:build` - Build frontend
 - `npm run frontend:install` - Install frontend dependencies
+
+## Frontend Notes
+
+The frontend is a vanilla JavaScript + Vite application with no build-time transpilation.
