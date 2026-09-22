@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { requireAuth } from '../../core/tenant.js';
+import { tenantMiddleware, requireAuth } from '../../core/tenant.js';
 import { generateAccessToken, generateRefreshToken, authenticateUser, createUser } from '../../core/auth.js';
 import { prisma } from '../../core/database.js';
 import jwt from 'jsonwebtoken';
@@ -110,6 +110,32 @@ router.post('/refresh', async (req, res, next) => {
     });
 
     res.json({ accessToken: newAccessToken, refreshToken: newRefreshToken });
+  } catch (e) {
+    next(e);
+  }
+});
+
+router.get('/me', tenantMiddleware, requireAuth, async (req, res, next) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: req.tenant.userId! },
+      select: { id: true, email: true, status: true, createdAt: true, updatedAt: true },
+    });
+
+    const userRole = await prisma.userRole.findFirst({
+      where: { userId: user!.id },
+      include: { role: true },
+    });
+
+    res.json({
+      user: {
+        id: user!.id,
+        email: user!.email,
+        status: user!.status,
+        organizationId: userRole?.organizationId,
+        role: userRole?.role.name,
+      },
+    });
   } catch (e) {
     next(e);
   }

@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "echo 'Frontend is vanilla HTML/JS; lint skipped'"
+    "lint": "eslint src --ext .js"
   },
   "devDependencies": {
     "eslint": "^8.57.1",
