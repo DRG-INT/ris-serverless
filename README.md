@@ -179,6 +179,29 @@ npm run test
 - `npm run frontend:build` - Build frontend for production
 - `npm run frontend:install` - Install frontend dependencies
 
+## Tauri Desktop
+
+This repo includes a Tauri 2 desktop wrapper. To develop the desktop app:
+
+```bash
+npm run tauri:dev
+```
+
+To build the desktop app:
+
+```bash
+npm run tauri:build
+```
+
+## Rust Linting
+
+The Tauri Rust code is linted with `clippy` and formatted with `rustfmt`:
+
+```bash
+npm run lint:rust
+npm run format:rust
+```
+
 ## Frontend Notes
 
 - **Stack**: Vanilla JavaScript + Vite (no React, no TypeScript transpilation in frontend)

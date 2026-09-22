@@ -5,3 +5,5 @@ dist
 .DS_Store
 coverage
 .vitest
+src-tauri/target
+src-tauri/Wayland-*
