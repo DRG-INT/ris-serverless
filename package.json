@@ -7,7 +7,7 @@
     "dev": "tsx watch src/server.ts",
     "build": "npm run frontend:build && tsc",
     "build:frontend": "cd frontend && npm run build",
-    "start": "node dist/server.js",
+    "start": "npm run frontend:build && tsx src/server.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "eslint src --ext .ts",
