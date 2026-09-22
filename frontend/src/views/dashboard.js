@@ -180,23 +180,64 @@ export async function renderDashboard(app) {
       }
       main.appendChild(grid);
     },
-    settings: () => {
+    settings: async () => {
       main.innerHTML = '';
       main.appendChild(el('h1', { class: 'text-2xl font-bold text-gray-900 mb-6', text: 'Settings' }));
-      const grid = el('div', { class: 'grid grid-cols-1 gap-6 lg:grid-cols-2' });
-      const sections = [
-        { title: 'Organization', text: 'Manage organization details and settings through the API.' },
-        { title: 'Users & Roles', text: 'Manage staff, instructors, and permissions.' },
-        { title: 'Integrations', text: 'Configure third-party integrations.' },
-        { title: 'Security', text: 'Security and authentication settings.' },
-      ];
-      sections.forEach(s => {
-        const card = el('div', { class: 'card p-4' });
-        card.appendChild(el('h2', { class: 'text-lg font-semibold text-gray-900', text: s.title }));
-        card.appendChild(el('p', { class: 'mt-1 text-sm text-gray-600', text: s.text }));
-        grid.appendChild(card);
+      const card = el('div', { class: 'card p-6' });
+      const form = el('form', { class: 'space-y-4 max-w-2xl' });
+      const errorEl = el('p', { class: 'text-sm text-error hidden' });
+      form.appendChild(errorEl);
+
+      let org = null;
+      try {
+        const orgRes = await api('/organizations');
+        org = orgRes?.[0] || null;
+      } catch (e) {
+        main.appendChild(el('p', { class: 'text-sm text-error', text: 'Failed to load organization settings.' }));
+        return;
+      }
+
+      if (!org) {
+        main.appendChild(el('p', { class: 'text-sm text-gray-600', text: 'No organization found.' }));
+        return;
+      }
+
+      const nameInput = el('input', { type: 'text', class: 'input', value: org.name || '' });
+      const slugInput = el('input', { type: 'text', class: 'input', value: org.slug || '' });
+      const settingsInput = el('textarea', { class: 'input', rows: '6', text: typeof org.settings === 'string' ? org.settings : JSON.stringify(org.settings || {}, null, 2) });
+
+      form.appendChild(el('label', { class: 'label', text: 'Organization Name' }));
+      form.appendChild(nameInput);
+      form.appendChild(el('label', { class: 'label', text: 'Slug' }));
+      form.appendChild(slugInput);
+      form.appendChild(el('label', { class: 'label', text: 'Settings (JSON)' }));
+      form.appendChild(settingsInput);
+
+      const btn = el('button', { type: 'submit', class: 'btn btn-primary', text: 'Save Settings' });
+      form.appendChild(btn);
+      card.appendChild(form);
+      main.appendChild(card);
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        errorEl.classList.add('hidden');
+        btn.disabled = true;
+        try {
+          let settings = {};
+          try { settings = JSON.parse(settingsInput.value); } catch { /* keep empty object if invalid JSON */ }
+          await api(`/organizations/${org.id}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ name: nameInput.value, slug: slugInput.value, settings }),
+          });
+          const saved = el('p', { class: 'text-sm text-green-600 mt-2', text: 'Settings saved.' });
+          card.appendChild(saved);
+        } catch (err) {
+          errorEl.textContent = err.message;
+          errorEl.classList.remove('hidden');
+        } finally {
+          btn.disabled = false;
+        }
       });
-      main.appendChild(grid);
     },
   };
 

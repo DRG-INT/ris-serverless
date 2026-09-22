@@ -34,6 +34,25 @@ router.get('/', async (req, res, next) => {
   }
 });
 
+const updateOrgSchema = z.object({
+  name: z.string().min(1).optional(),
+  slug: z.string().min(1).optional(),
+  settings: z.unknown().optional(),
+});
+
+router.patch('/:id', async (req, res, next) => {
+  try {
+    const data = updateOrgSchema.parse(req.body);
+    const org = await prisma.organization.update({
+      where: { id: req.params.id },
+      data: data as Parameters<typeof prisma.organization.update>[0]['data'],
+    });
+    res.json(org);
+  } catch (e) {
+    next(e);
+  }
+});
+
 router.get('/:id', async (req, res, next) => {
   try {
     const org = await prisma.organization.findFirst({
