@@ -1,8 +1,15 @@
-# Recreation in Sport - Serverless
+# Recreation in Sport
 
-API-first modular sports and recreation management platform built with Node.js, TypeScript, Express, and Prisma.
+API-first modular sports and recreation management platform.
+
+## Repository
+
+- **Backend/API**: Node.js, Express, Prisma, PostgreSQL
+- **Frontend/GUI**: React, TypeScript, Vite, TanStack Query, Tailwind CSS
 
 ## Quick Start
+
+### Backend
 
 1. Install dependencies:
 ```bash
@@ -14,20 +21,32 @@ npm install
 cp .env.example .env
 ```
 
-3. Start PostgreSQL (ensure it's running on localhost:5432)
-
-4. Run migrations and seed:
+3. Start PostgreSQL and run migrations:
 ```bash
 npm run db:generate
 npm run db:seed
 ```
 
-5. Start the application:
+4. Start the API:
 ```bash
 npm run dev
 ```
 
-The API is available at `http://localhost:3000/api/v1`.
+API available at `http://localhost:3000/api/v1`.
+
+### Frontend
+
+1. Install dependencies:
+```bash
+npm run frontend:install
+```
+
+2. Start the GUI:
+```bash
+npm run frontend:dev
+```
+
+Frontend available at `http://localhost:5173`.
 
 ## Demo Credentials
 
@@ -36,13 +55,13 @@ The API is available at `http://localhost:3000/api/v1`.
 - `trainer@example.test` / `password123`
 - `member@example.test` / `password123`
 
-## API Documentation
+## Documentation
 
-See `docs/api/openapi.yaml` for the OpenAPI specification.
-
-## Architecture
-
-See `docs/architecture/adr/` for architectural decision records.
+- API: `docs/api/openapi.yaml`
+- Architecture: `docs/architecture/adr/`
+- Domain model: `docs/product/domain-model.md`
+- Metamodel: `docs/metamodel/product-model.json`
+- GUI docs: `docs/gui/` (to be added)
 
 ## Testing
 
@@ -52,10 +71,13 @@ npm run test
 
 ## Scripts
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run start` - Start production server
+- `npm run dev` - Start backend dev server
+- `npm run build` - Build backend
 - `npm run test` - Run tests
+- `npm run lint` - Lint backend
 - `npm run db:generate` - Generate Prisma migrations
 - `npm run db:seed` - Seed database
 - `npm run db:studio` - Open Prisma Studio
+- `npm run frontend:dev` - Start frontend dev server
+- `npm run frontend:build` - Build frontend
+- `npm run frontend:install` - Install frontend dependencies
