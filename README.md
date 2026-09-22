@@ -52,12 +52,43 @@ npm start              # Serves API + static frontend from :3000
 
 ### Termux / Android Setup
 
-1. Install system dependencies:
+**Note**: Prisma’s native query engine does **not** run on Android/Termux. The recommended workflow is to run the backend on a desktop/server with PostgreSQL, then access it from Termux. If you must run locally on Termux, use a remote Postgres provider and skip local Prisma migrations.
+
+#### Option A: Desktop development (recommended)
+
+1. Clone and install:
 ```bash
-pkg update && pkg install -y git nodejs postgresql
+git clone https://github.com/DRG-INT/ris-serverless.git
+cd ris-serverless
+npm install
+cd frontend && npm install && cd ..
 ```
 
-2. Clone the repo and install dependencies:
+2. Create `.env` from the example:
+```bash
+cp .env.example .env
+```
+
+3. Start PostgreSQL locally and run migrations:
+```bash
+npm run db:generate
+npm run db:seed
+```
+
+4. Start the app:
+```bash
+npm run dev            # Backend on :3000
+cd frontend && npm run dev   # Frontend on :5173
+```
+
+#### Option B: Termux with remote PostgreSQL
+
+1. Install dependencies:
+```bash
+pkg update && pkg install -y git nodejs
+```
+
+2. Clone and install:
 ```bash
 git clone https://github.com/DRG-INT/ris-serverless.git
 cd ris-serverless
@@ -67,13 +98,13 @@ cd frontend && npm install && cd ..
 
 3. Create `.env` in the project root:
 ```bash
-cat > .env << 'EOF'
+cat > .env << 'ENVEOF'
 NODE_ENV=development
 APP_NAME="Recreation in Sport"
 APP_URL=http://localhost:3000
 PORT=3000
 
-DATABASE_URL="postgresql://peter@localhost:5432/ris_serverless?schema=public"
+DATABASE_URL="postgresql://YOUR_USER:YOUR_PASS@YOUR_HOST:5432/ris_serverless?schema=public"
 
 JWT_SECRET=change-me-in-production-minimum-32-chars-long
 JWT_ACCESS_TTL=3600
@@ -85,29 +116,31 @@ STRIPE_WEBHOOK_SECRET=
 
 MAIL_FROM=noreply@example.com
 MAIL_DRIVER=log
-EOF
+ENVEOF
 ```
 
-4. Initialize local PostgreSQL (if using local DB):
-```bash
-initdb ~/postgres_data
-pg_ctl -D ~/postgres_data -l ~/postgres.log start
-```
+Replace `YOUR_USER`, `YOUR_PASS`, and `YOUR_HOST` with your remote Postgres credentials.
+
+4. **Skip Prisma migrations on Termux** — they require the native query engine. Instead:
+   - Run `npm run db:generate && npm run db:seed` from a desktop machine against the same remote database, OR
+   - Apply the initial migration manually from Termux:
+     ```bash
+     curl -fsSL https://raw.githubusercontent.com/DRG-INT/ris-serverless/main/prisma/migrations/20260921191957_init/migration.sql -o /tmp/init.sql
+     psql "$DATABASE_URL" -f /tmp/init.sql
+     npx tsx prisma/seed.ts
+     ```
 
 5. Start the app:
 ```bash
 npm start
 ```
 
-### Termux / Android Known Issues
+#### Termux Known Issues
 
-- **Prisma schema engine**: native binary does not run on Android. Skip `npm run db:generate` and apply the initial migration manually:
-  ```bash
-  psql "$DATABASE_URL" -f prisma/migrations/20260921191957_init/migration.sql
-  npx tsx prisma/seed.ts
-  ```
+- **Prisma native engine**: incompatible with Android. If you see `P5010` or `Unable to require libquery_engine...`, you’re hitting this limitation. Use Option B with a remote Postgres, or run on desktop.
 - **Missing global CLIs**: if `vite`, `tsx`, or `tsc` are not found, use `npx vite build`, `npx tsx src/server.ts`, or run `npm install` in the relevant folder.
 - **Zod config errors**: ensure `.env` exists and contains `DATABASE_URL` and `JWT_SECRET`.
+- **`npm run build` fails**: on Termux, `tsc` may be missing. Use `npm start` instead, which builds the frontend and runs the backend via `npx tsx`.
 
 ## Demo Credentials
 
