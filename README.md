@@ -9,44 +9,46 @@ API-first modular sports and recreation management platform.
 
 ## Quick Start
 
-### Backend
+### Backend + Frontend (merged)
 
-1. Install dependencies:
+This project serves the built frontend from the Express backend. In development, the frontend dev server proxies API requests to the backend.
+
+1. Install backend dependencies:
 ```bash
 npm install
 ```
 
-2. Configure environment:
+2. Install frontend dependencies:
+```bash
+cd frontend && npm install && cd ..
+```
+
+3. Configure environment:
 ```bash
 cp .env.example .env
 ```
 
-3. Start PostgreSQL and run migrations:
+4. Start PostgreSQL and run migrations:
 ```bash
 npm run db:generate
 npm run db:seed
 ```
 
-4. Start the API:
+5. Start both servers in development:
 ```bash
-npm run dev
+npm run dev            # Backend on :3000
+cd frontend && npm run dev   # Frontend on :5173, proxies /api to backend
 ```
 
-API available at `http://localhost:3000/api/v1`.
+Frontend available at `http://localhost:5173`, API at `http://localhost:3000/api/v1`.
 
-### Frontend
+### Production Build
 
-1. Install dependencies:
+Build and serve from one process:
 ```bash
-cd frontend && npm install
+npm run build          # Builds frontend, then compiles backend TypeScript
+npm start              # Serves API + static frontend from :3000
 ```
-
-2. Start the GUI:
-```bash
-cd frontend && npm run dev
-```
-
-Frontend available at `http://localhost:5173`.
 
 ### Termux / Android Workaround
 

@@ -4,11 +4,14 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { config } from './core/config.js';
 import { prisma } from './core/database.js';
 import { router } from './core/router.js';
 import { errorHandler } from './core/errors.js';
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 
 app.use(helmet());
@@ -38,6 +41,17 @@ app.get('/ready', async (_req, res) => {
 });
 
 app.use('/api/v1', router);
+
+const publicDir = path.join(__dirname, '../../public');
+const distDir = path.join(__dirname, '../../frontend/dist');
+const staticDir = path.join(__dirname, '../../frontend/dist/assets');
+app.use(express.static(staticDir, { immutable: true, maxAge: '1y' }));
+app.use(express.static(publicDir));
+app.use(express.static(distDir, { index: false }));
+
+app.get('*', (_req, res) => {
+  res.sendFile(path.join(distDir, 'index.html'));
+});
 
 app.use(errorHandler);
 
