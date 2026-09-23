@@ -183,10 +183,6 @@ export async function renderDashboard(app) {
     settings: async () => {
       main.innerHTML = '';
       main.appendChild(el('h1', { class: 'text-2xl font-bold text-gray-900 mb-6', text: 'Settings' }));
-      const card = el('div', { class: 'card p-6' });
-      const form = el('form', { class: 'space-y-4 max-w-2xl' });
-      const errorEl = el('p', { class: 'text-sm text-error hidden' });
-      form.appendChild(errorEl);
 
       let org = null;
       try {
@@ -202,35 +198,127 @@ export async function renderDashboard(app) {
         return;
       }
 
+      const settings = (org.settings && typeof org.settings === 'object') ? org.settings : {};
+
+      const wrap = el('div', { class: 'grid grid-cols-1 gap-6 lg:grid-cols-2' });
+
+      const section = (title, children) => {
+        const card = el('div', { class: 'card p-6' });
+        card.appendChild(el('h2', { class: 'text-lg font-semibold text-gray-900 mb-4', text: title }));
+        children.forEach(c => card.appendChild(c));
+        return card;
+      };
+
+      const field = (label, input) => {
+        const wrap = el('div', { class: 'mb-4' });
+        wrap.appendChild(el('label', { class: 'label', text: label }));
+        wrap.appendChild(input);
+        return wrap;
+      };
+
       const nameInput = el('input', { type: 'text', class: 'input', value: org.name || '' });
       const slugInput = el('input', { type: 'text', class: 'input', value: org.slug || '' });
-      const settingsInput = el('textarea', { class: 'input', rows: '6', text: typeof org.settings === 'string' ? org.settings : JSON.stringify(org.settings || {}, null, 2) });
+      const timezoneInput = el('input', { type: 'text', class: 'input', value: settings.timezone || 'UTC' });
+      const currencyInput = el('select', { class: 'input' });
+      const currencies = ['USD', 'EUR', 'HUF', 'GBP', 'CAD', 'AUD'];
+      currencies.forEach(c => {
+        const opt = el('option', { value: c, text: c });
+        if (c === (settings.currency || 'USD')) opt.selected = true;
+        currencyInput.appendChild(opt);
+      });
+      const dateFormatInput = el('select', { class: 'input' });
+      const dateFormats = [{ value: 'MM/DD/YYYY', text: 'MM/DD/YYYY' }, { value: 'DD/MM/YYYY', text: 'DD/MM/YYYY' }, { value: 'YYYY-MM-DD', text: 'YYYY-MM-DD' }];
+      dateFormats.forEach(f => {
+        const opt = el('option', { value: f.value, text: f.text });
+        if (f.value === (settings.dateFormat || 'YYYY-MM-DD')) opt.selected = true;
+        dateFormatInput.appendChild(opt);
+      });
+      const emailNotifInput = el('input', { type: 'checkbox' });
+      if (settings.emailNotifications !== false) emailNotifInput.checked = true;
+      const smsNotifInput = el('input', { type: 'checkbox' });
+      if (settings.smsNotifications) smsNotifInput.checked = true;
+      const sessionTimeoutInput = el('input', { type: 'number', class: 'input', value: settings.sessionTimeout || 60, min: 5, max: 480 });
+      const stripeKeyInput = el('input', { type: 'text', class: 'input', value: settings.stripePublishableKey || '', placeholder: 'pk_live_...' });
+      const webhookUrlInput = el('input', { type: 'url', class: 'input', value: settings.webhookUrl || '', placeholder: 'https://...' });
+      const advancedInput = el('textarea', { class: 'input', rows: 10, text: JSON.stringify(settings, null, 2) });
 
-      form.appendChild(el('label', { class: 'label', text: 'Organization Name' }));
-      form.appendChild(nameInput);
-      form.appendChild(el('label', { class: 'label', text: 'Slug' }));
-      form.appendChild(slugInput);
-      form.appendChild(el('label', { class: 'label', text: 'Settings (JSON)' }));
-      form.appendChild(settingsInput);
+      const profileCard = section('Organization Profile', [
+        field('Organization Name', nameInput),
+        field('Slug', slugInput),
+      ]);
 
-      const btn = el('button', { type: 'submit', class: 'btn btn-primary', text: 'Save Settings' });
-      form.appendChild(btn);
-      card.appendChild(form);
-      main.appendChild(card);
+      const localizationCard = section('Localization', [
+        field('Timezone', timezoneInput),
+        field('Currency', currencyInput),
+        field('Date Format', dateFormatInput),
+      ]);
 
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
+      const notificationsCard = section('Notifications', [
+        el('div', { class: 'flex items-center gap-2 mb-2' }, [
+          emailNotifInput,
+          el('label', { class: 'text-sm text-gray-700', text: 'Enable email notifications' }),
+        ]),
+        el('div', { class: 'flex items-center gap-2' }, [
+          smsNotifInput,
+          el('label', { class: 'text-sm text-gray-700', text: 'Enable SMS notifications' }),
+        ]),
+      ]);
+
+      const securityCard = section('Security', [
+        field('Session timeout (minutes)', sessionTimeoutInput),
+      ]);
+
+      const integrationsCard = section('Integrations', [
+        field('Stripe Publishable Key', stripeKeyInput),
+        field('Webhook URL', webhookUrlInput),
+      ]);
+
+      const advancedCard = section('Advanced Settings (JSON)', [
+        el('p', { class: 'text-sm text-gray-600 mb-2', text: 'Edit raw JSON for additional settings.' }),
+        advancedInput,
+      ]);
+
+      wrap.appendChild(profileCard);
+      wrap.appendChild(localizationCard);
+      wrap.appendChild(notificationsCard);
+      wrap.appendChild(securityCard);
+      wrap.appendChild(integrationsCard);
+      wrap.appendChild(advancedCard);
+      main.appendChild(wrap);
+
+      const errorEl = el('p', { class: 'text-sm text-error hidden mt-4' });
+      main.appendChild(errorEl);
+      const btn = el('button', { class: 'btn btn-primary mt-6', text: 'Save Settings' });
+      main.appendChild(btn);
+
+      btn.addEventListener('click', async () => {
         errorEl.classList.add('hidden');
         btn.disabled = true;
         try {
-          let settings = {};
-          try { settings = JSON.parse(settingsInput.value); } catch { /* keep empty object if invalid JSON */ }
+          const newSettings = {
+            ...settings,
+            timezone: timezoneInput.value,
+            currency: currencyInput.value,
+            dateFormat: dateFormatInput.value,
+            emailNotifications: emailNotifInput.checked,
+            smsNotifications: smsNotifInput.checked,
+            sessionTimeout: parseInt(sessionTimeoutInput.value, 10) || 60,
+            stripePublishableKey: stripeKeyInput.value,
+            webhookUrl: webhookUrlInput.value,
+          };
+          try { JSON.parse(advancedInput.value); } catch {
+            advancedInput.value = JSON.stringify(newSettings, null, 2);
+          }
           await api(`/organizations/${org.id}`, {
             method: 'PATCH',
-            body: JSON.stringify({ name: nameInput.value, slug: slugInput.value, settings }),
+            body: JSON.stringify({
+              name: nameInput.value,
+              slug: slugInput.value,
+              settings: newSettings,
+            }),
           });
-          const saved = el('p', { class: 'text-sm text-green-600 mt-2', text: 'Settings saved.' });
-          card.appendChild(saved);
+          const saved = el('p', { class: 'text-sm text-green-600 mt-2', text: 'Settings saved successfully.' });
+          main.insertBefore(saved, errorEl);
         } catch (err) {
           errorEl.textContent = err.message;
           errorEl.classList.remove('hidden');
