@@ -6,6 +6,7 @@ API-first modular sports and recreation management platform.
 
 - **Backend/API**: Node.js, Express, Prisma, PostgreSQL
 - **Frontend/GUI**: Vanilla JavaScript + Vite
+- **Desktop**: Tauri 2 wrapper around the same frontend
 
 ## Quick Start
 
@@ -49,6 +50,33 @@ Build and serve from one process:
 npm run build          # Builds frontend, then compiles backend TypeScript
 npm start              # Serves API + static frontend from :3000
 ```
+
+### Tauri Desktop
+
+This repo includes a Tauri 2 desktop wrapper around the Vite frontend.
+
+1. Install Rust and Tauri CLI:
+```bash
+# macOS
+brew install rustup
+rustup-init
+cargo install tauri-cli --version "^2.0.0"
+
+# Or use npm (requires Rust toolchain)
+npm install -g @tauri-apps/cli
+```
+
+2. Run desktop dev mode:
+```bash
+npm run tauri:dev
+```
+
+3. Build desktop installer:
+```bash
+npm run tauri:build
+```
+
+Output will be in `src-tauri/target/release/bundle/`.
 
 ### Termux / Android Setup
 
@@ -157,7 +185,10 @@ npm start
 - Architecture: `docs/architecture/adr/`
 - Domain model: `docs/product/domain-model.md`
 - Metamodel: `docs/metamodel/product-model.json`
-- GUI docs: `docs/gui/` (to be added)
+- GUI docs: `docs/gui/`
+- Development setup: `docs/development/setup.md`
+- Testing: `docs/development/testing.md`
+- Repository audit: `docs/architecture/repository-audit.md`
 
 ## Testing
 
@@ -171,36 +202,19 @@ npm run test
 - `npm run build` - Build frontend with Vite, then compile backend TypeScript
 - `npm run start` - Build frontend and run backend via tsx (no dist/ needed)
 - `npm run test` - Run tests
+- `npm run test:watch` - Run tests in watch mode
 - `npm run lint` - Lint backend TypeScript
+- `npm run lint:rust` - Lint Tauri Rust code with clippy
+- `npm run format:rust` - Check Rust code formatting
 - `npm run db:generate` - Generate Prisma migrations
 - `npm run db:seed` - Seed database
 - `npm run db:studio` - Open Prisma Studio
 - `npm run frontend:dev` - Start frontend dev server with Vite
 - `npm run frontend:build` - Build frontend for production
 - `npm run frontend:install` - Install frontend dependencies
-
-## Tauri Desktop
-
-This repo includes a Tauri 2 desktop wrapper. To develop the desktop app:
-
-```bash
-npm run tauri:dev
-```
-
-To build the desktop app:
-
-```bash
-npm run tauri:build
-```
-
-## Rust Linting
-
-The Tauri Rust code is linted with `clippy` and formatted with `rustfmt`:
-
-```bash
-npm run lint:rust
-npm run format:rust
-```
+- `npm run tauri` - Run Tauri CLI
+- `npm run tauri:dev` - Run Tauri desktop in dev mode
+- `npm run tauri:build` - Build Tauri desktop app
 
 ## Frontend Notes
 
@@ -210,6 +224,7 @@ npm run format:rust
 - **Auth**: `localStorage` tokens; dashboard fetches `GET /auth/me`
 - **Dev**: Vite proxies `/api` to backend `:3000`
 - **Prod**: Express serves `frontend/dist/` statically
+- **Desktop**: Tauri 2 wraps the same Vite frontend as a native desktop app
 - **Lint**: `cd frontend && npm run lint`
 
 ## Backend Notes
@@ -218,3 +233,9 @@ npm run format:rust
 - **Auth**: JWT access + refresh tokens, bcrypt hashing
 - **Multi-tenancy**: `tenantMiddleware` sets `req.tenant` from Bearer token
 - **Modules**: 20+ bounded contexts under `src/modules/*`
+- **Endpoints**: RESTful API under `/api/v1/*`
+
+## Screenshots
+
+- Web GUI: `docs/gui/screenshot.png`
+- Desktop: run `npm run tauri:dev` and capture from the native window
