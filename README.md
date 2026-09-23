@@ -157,7 +157,10 @@ npm start
 - Architecture: `docs/architecture/adr/`
 - Domain model: `docs/product/domain-model.md`
 - Metamodel: `docs/metamodel/product-model.json`
-- GUI docs: `docs/gui/` (to be added)
+- GUI docs: `docs/gui/`
+- Development setup: `docs/development/setup.md`
+- Testing: `docs/development/testing.md`
+- Repository audit: `docs/architecture/repository-audit.md`
 
 ## Testing
 
@@ -171,6 +174,7 @@ npm run test
 - `npm run build` - Build frontend with Vite, then compile backend TypeScript
 - `npm run start` - Build frontend and run backend via tsx (no dist/ needed)
 - `npm run test` - Run tests
+- `npm run test:watch` - Run tests in watch mode
 - `npm run lint` - Lint backend TypeScript
 - `npm run db:generate` - Generate Prisma migrations
 - `npm run db:seed` - Seed database
@@ -195,3 +199,4 @@ npm run test
 - **Auth**: JWT access + refresh tokens, bcrypt hashing
 - **Multi-tenancy**: `tenantMiddleware` sets `req.tenant` from Bearer token
 - **Modules**: 20+ bounded contexts under `src/modules/*`
+- **Endpoints**: RESTful API under `/api/v1/*`
